@@ -32,15 +32,20 @@ router.route('/testimonials/:id').get((req, res) => {
 });
 
 router.route('/testimonials').post((req, res) => {
-    const idx = generateNextId();
-    db.push({id: idx, ...req.body });
-
-    res.json(db.find(({ id }) => id === idx));
+    if (req.body.author && req.body.text) {
+        const idx = generateNextId();
+        db.push({id: idx, ...req.body });
+        res.json(db.find(({ id }) => id === idx));
+    } else {
+        res.status(400).json({ message: "Bad request"});
+    }
 });
 
 router.route('/testimonials/:id').put((req, res) => {
     const entry = getElementById(req.params.id);
-    if (entry) {
+    if (!(req.body.author || req.body.text)) {
+        res.status(400).json({ message: "Bad request"});
+    } else if (entry) {
         entry.author = req.body.author;
         entry.text = req.body.text;
         res.json(entry);
