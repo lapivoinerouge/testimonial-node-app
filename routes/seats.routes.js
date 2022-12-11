@@ -25,12 +25,21 @@ router.route('/seats/:id').get((req, res) => {
 
 router.route('/seats').post((req, res) => {
     const idx = generateNextId();
-    const day = parseInt(req.body.day);
-    const seat = parseInt(req.body.seat);
+    const dayInt = parseInt(req.body.day);
+    const seatInt = parseInt(req.body.seat);
 
-    db.push({id: idx, day: day, seat: seat, client: req.body.client, email: req.body.client });
-
-    res.json(db.find(({ id }) => id === idx));
+    if (!db.some(({ seat, day }) => seat === seatInt && day === dayInt)) {
+        db.push({
+            id: idx, 
+            day: dayInt, 
+            seat: seatInt, 
+            client: req.body.client,
+            email: req.body.client
+        });
+        res.json(db.find(({ id }) => id === idx));
+    } else {
+        res.status(400).json({ message: "The slot is already taken" });
+    }
 });
 
 router.route('/seats/:id').put((req, res) => {
