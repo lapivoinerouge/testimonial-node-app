@@ -4,6 +4,7 @@ import { Button, Progress, Alert } from 'reactstrap';
 import { getSeats, getRequests, loadSeats, getOccupiedSeats } from '../../../redux/seatsRedux';
 import { io } from "socket.io-client";
 import './SeatChooser.scss';
+import { API_URL } from '../../../config';
 
 const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
   const occupiedSeats = useSelector(state => getOccupiedSeats(state, parseInt(chosenDay)));
 
   useEffect(() => {
-    const socket = io('http://localhost:8000');
+    const socket = io(API_URL);
     socket.on('seatsUpdated', seats => {
       dispatch(loadSeats(seats));
     });
