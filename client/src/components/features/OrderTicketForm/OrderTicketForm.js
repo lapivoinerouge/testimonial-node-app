@@ -9,7 +9,6 @@ import SeatChooser from './../SeatChooser/SeatChooser';
 const OrderTicketForm = () => {
   const dispatch = useDispatch();
   const requests = useSelector(getRequests);
-  console.log(requests);
 
   const [order, setOrder] = useState({
     client: '',
@@ -52,7 +51,7 @@ const OrderTicketForm = () => {
   }
 
   return (
-    <Form className="order-ticket-form" onSubmit={submitForm}>
+    <Form className="order-ticket-form" onSubmit={e => submitForm(e)}>
       <Row>
         <Col xs="12" md="6">
           { (isError) && <Alert color="warning">There are some errors in you form. Have you fill all the fields? Maybe you forgot to choose your seat?</Alert> }

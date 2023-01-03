@@ -5,8 +5,6 @@ import { getSeats, getRequests, loadSeats, getOccupiedSeats } from '../../../red
 import { io } from "socket.io-client";
 import './SeatChooser.scss';
 
-const socket = io('http://localhost:8000');
-
 const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
   const dispatch = useDispatch();
   const seats = useSelector(getSeats);
@@ -14,6 +12,7 @@ const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
   const occupiedSeats = useSelector(state => getOccupiedSeats(state, parseInt(chosenDay)));
 
   useEffect(() => {
+    const socket = io('http://localhost:8000');
     socket.on('seatsUpdated', seats => {
       dispatch(loadSeats(seats));
     });
