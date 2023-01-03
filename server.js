@@ -3,6 +3,7 @@ const cors = require('cors');
 const socket = require('socket.io');
 const path = require('path');
 const app = express();
+require('dotenv').config();
 
 const mongoose = require('mongoose');
 
@@ -19,7 +20,7 @@ app.use(express.urlencoded({ extended: false}));
 app.use(express.json());
 app.use(cors());
 
-mongoose.connect('mongodb://localhost:27017/NewWaveDB', { useNewUrlParser: true });
+mongoose.connect(`mongodb+srv://admin:${process.env.MONGO_ATLAS_PASSWORD}@vcluster.wacbnbq.mongodb.net/?retryWrites=true&w=majority`, { useNewUrlParser: true });
 const db = mongoose.connection;
 
 db.once('open', () => {
