@@ -5,6 +5,9 @@ const path = require('path');
 const app = express();
 require('dotenv').config();
 
+const helmet = require('helmet');
+app.use(helmet());
+
 const mongoose = require('mongoose');
 mongoose.set("strictQuery", true);
 

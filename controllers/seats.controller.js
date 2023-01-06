@@ -1,4 +1,5 @@
 const Seat = require('../models/seat.model');
+var sanitize = require('mongo-sanitize');
 
 exports.getAll = async (req, res) => {
   try {
@@ -23,9 +24,14 @@ exports.getById = async (req, res) => {
 exports.post = async (req, res) => {
   try {
     const { day, seat, client, email } = req.body;
-    const existingData = await Seat.findOne({ seat: seat, day: day });
+    var sanitizedDay = sanitize(day);
+    var sanitizedSeat = sanitize(seat);
+    var sanitizedClient = sanitize(client);
+    var sanitizedEmail = sanitize(email);
+
+    const existingData = await Seat.findOne({ seat: sanitizedSeat, day: sanitizedDay });
     if (!existingData) {
-      const newSeat = new Seat({ seat: seat, day: day, client: client, email: email });
+      const newSeat = new Seat({ seat: sanitizedSeat, day: sanitizedDay, client: sanitizedClient, email: sanitizedEmail });
       const data = await newSeat.save();
       res.json(data);
     } else {
@@ -41,10 +47,15 @@ exports.post = async (req, res) => {
 exports.put = async (req, res) => {
   try {
     const { seat, day, client, email } = req.body;
-    // day = parseInt(day);
+
+    var sanitizedDay = sanitize(day);
+    var sanitizedSeat = sanitize(seat);
+    var sanitizedClient = sanitize(client);
+    var sanitizedEmail = sanitize(email);
+    
     const existingData = await Seat.findById(req.params.id);
     if (existingData) {
-      await Seat.updateOne({ _id: req.params.id }, { $set: { seat: seat, day: day, client: client, email: email }});
+      await Seat.updateOne({ _id: req.params.id }, { $set: { seat: sanitizedSeat, day: sanitizedDay, client: sanitizedClient, email: sanitizedEmail }});
       const data = await Seat.findById(req.params.id);
       res.json(data);
     } else {

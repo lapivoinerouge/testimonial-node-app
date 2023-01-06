@@ -1,4 +1,5 @@
 const Concert = require('../models/concert.model');
+var sanitize = require('mongo-sanitize');
 
 exports.getAll = async (req, res) => {
   try {
@@ -67,9 +68,16 @@ exports.getByDay = async (req, res) => {
 exports.post = async (req, res) => {
   try {
     const { performer, genre, price, day, image } = req.body;
-    const existingData = await Concert.find({ performer: performer, genre: genre, price: price, day: day, image: image })
+
+    var sanitizedPerformer = sanitize(performer);
+    var sanitizedGenre = sanitize(genre);
+    var sanitizedPrice = sanitize(price);
+    var sanitizedDay = sanitize(day);
+    var sanitizedImage = sanitize(image);
+
+    const existingData = await Concert.find({ performer: sanitizedPerformer, genre: sanitizedGenre, price: sanitizedPrice, day: sanitizedDay, image: sanitizedImage })
     if (!existingData) {
-      const concert = new Concert({ performer: performer, genre: genre, price: price, day: day, image: image });
+      const concert = new Concert({ performer: sanitizedPerformer, genre: sanitizedGenre, price: sanitizedPrice, day: sanitizedDay, image: sanitizedImage });
       const savedConcert = await concert.save();
       res.json(savedConcert);
     } else {
@@ -83,10 +91,17 @@ exports.post = async (req, res) => {
 exports.put = async (req, res) => {
   try {
     const { performer, genre, price, day, image } = req.body;
+
+    var sanitizedPerformer = sanitize(performer);
+    var sanitizedGenre = sanitize(genre);
+    var sanitizedPrice = sanitize(price);
+    var sanitizedDay = sanitize(day);
+    var sanitizedImage = sanitize(image);
+
     const existingData = await Concert.findById(req.params.id);
 
     if (existingData) {
-      await Concert.updateOne({ _id: req.params.id }, { $set: { performer: performer, genre: genre, price: price, day: day, image: image  }});
+      await Concert.updateOne({ _id: req.params.id }, { $set: { performer: sanitizedPerformer, genre: sanitizedGenre, price: sanitizedPrice, day: sanitizedDay, image: sanitizedImage }});
       const updatedConcert = await Concert.findById(req.params.id);
       res.json(updatedConcert);
     } else {

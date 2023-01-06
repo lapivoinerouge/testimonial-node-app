@@ -1,4 +1,5 @@
 const Testimonial = require('../models/testimonial.model');
+var sanitize = require('mongo-sanitize');
 
 exports.getAll = async (req, res) => {
   try {
@@ -37,7 +38,11 @@ exports.post = async (req, res) => {
   try {
     if (req.body.author && req.body.text) {
       const { author, text } = req.body;
-      const testimonial = new Testimonial({ author: author, text: text });
+
+      var sanitizedAuthor = sanitize(author);
+      var sanitizedText = sanitize(text);
+
+      const testimonial = new Testimonial({ author: sanitizedAuthor, text: sanitizedText });
       const data = await testimonial.save();
       res.json(data);
     } else {
@@ -52,7 +57,11 @@ exports.put = async (req, res) => {
   try {
     if (req.body.author && req.body.text) {
       const { author, text } = req.body;
-      await Testimonial.updateOne({ _id: req.params.id }, { $set: { author: author, text: text }});
+
+      var sanitizedAuthor = sanitize(author);
+      var sanitizedText = sanitize(text);
+
+      await Testimonial.updateOne({ _id: req.params.id }, { $set: { author: sanitizedAuthor, text: sanitizedText }});
       const data = await Testimonial.findById(req.params.id);
       res.json(data);
     } else {
